@@ -47,10 +47,126 @@ const ptQ = {};
 const ptOpt = {};
 function key(q){return q.chapter+"-"+q.number}
 function explanation(q){
-  const a=q.answer.map(i=>displayText(q.options[i])).join(", ");
-  const d=detailedExplanation(q);
-  return {en:`The correct answer is: ${a}. ${d.en}`,pt:`A resposta correta é: ${a}. ${d.pt}`};
+ const a=q.answer.map(i=>displayText(q.options[i])).join(", ");
+ return {
+  en:`The correct answer is: ${a}. This follows the expected Kali/Linux behavior or the definition tested by this question.`,
+  pt:`A resposta correta é: ${a}. Isso está de acordo com o comportamento esperado do Kali/Linux ou com a definição avaliada nesta questão.`
+ };
 }
+
+// --- Question/answer translation layer ---
+const translations = {
+" The most current version of Kali is:":"A versão mais atual do Kali é:",
+"If you have a 64-bit Intel desktop, which Kali image will boot on your machine? Select all that apply.":"Se você possui um desktop Intel de 64 bits, qual imagem do Kali inicializará em sua máquina? Selecione todas as aplicáveis.",
+"How can you determine whether the CPU in your Kali Linux machine is 32 or 64-bit?":"Como você pode determinar se a CPU da sua máquina Kali Linux é de 32 ou 64 bits?",
+"Which command will download and import the Kali public key over https?":"Qual comando baixará e importará a chave pública do Kali via HTTPS?",
+"When installing Kali Linux to a virtual machine, which installation method will most likely produce a clean install?":"Ao instalar o Kali Linux em uma máquina virtual, qual método de instalação provavelmente produzirá uma instalação limpa?",
+"Which character is used to represent the user's home directory?":"Qual caractere é usado para representar o diretório pessoal do usuário?",
+"Which tools can be used to get file information? Check all that apply.":"Quais ferramentas podem ser usadas para obter informações de arquivos? Selecione todas as aplicáveis.",
+"Which of the following files is not a block or character device?":"Qual dos arquivos a seguir não é um dispositivo de bloco ou caractere?",
+"How can the file permissions -r---w---- be represented in octal notation?":"Como as permissões de arquivo -r---w---- podem ser representadas em notação octal?",
+"Based on the following partial directory listing, what permissions does user have on the file test?":"Com base na listagem parcial de diretório a seguir, quais permissões o usuário possui no arquivo test?",
+"You have two jobs running in the background. How do you kill the first job you executed?":"Você possui dois jobs executando em segundo plano. Como finalizar o primeiro job executado?",
+"Which command does not control the permissions or user attributes associated with a file ?":"Qual comando não controla as permissões ou os atributos de usuário associados a um arquivo?",
+"Which command displays the identity of the user running the session along with the list of groups they belong to?":"Qual comando exibe a identidade do usuário que está executando a sessão juntamente com a lista de grupos aos quais ele pertence?",
+"Which command summarizes the PCI hardware through the /proc and /sys virtual filesystems?":"Qual comando resume o hardware PCI por meio dos sistemas de arquivos virtuais /proc e /sys?",
+"According to the FHS, which directory contains log files, queues, spools and cache data handled by daemons?":"De acordo com o FHS, qual diretório contém arquivos de log, filas, spools e dados de cache gerenciados por daemons?",
+"Which is the recommended configuration for simple Intel-based Kali SSH server with no desktop (headless)?":"Qual é a configuração recomendada para um servidor Kali SSH simples baseado em Intel, sem ambiente gráfico (headless)?",
+"Generally speaking, which of these is not a minimum requirement for a Kali Linux desktop?":"De modo geral, qual destes não é um requisito mínimo para um desktop Kali Linux?",
+"True or False: The Kali Linux installation will fail if you do not select a network mirror.":"Verdadeiro ou falso: a instalação do Kali Linux falhará se você não selecionar um espelho de rede.",
+"True or False: When booted from the mini.iso, the Kali Linux installation will fail is network hardware can not be detected.":"Verdadeiro ou falso: ao inicializar a partir da mini.iso, a instalação do Kali Linux falhará se o hardware de rede não puder ser detectado.",
+"Which partitioning scheme is most likely to be affected by user error?":"Qual esquema de particionamento tem maior probabilidade de ser afetado por erro do usuário?",
+"Which partitioning method is preferred for servers and multi-user systems?":"Qual método de particionamento é preferido para servidores e sistemas multiusuário?",
+"Installing a modern version of Windows after a Kali installation will:":"Instalar uma versão moderna do Windows após uma instalação do Kali irá:",
+"What is the purpose of preseed.conf?":"Qual é a finalidade do preseed.conf?",
+"What is the simplest and most effective procedure for installing Kali on an ARM device?":"Qual é o procedimento mais simples e eficaz para instalar o Kali em um dispositivo ARM?",
+"Which method is not readily available for saving debug logs during a failed install?":"Qual método não está prontamente disponível para salvar logs de depuração durante uma instalação que falhou?",
+"You can use GNOME's control center to graphically set network options with which tool?":"Você pode usar o centro de controle do GNOME para configurar graficamente as opções de rede com qual ferramenta?",
+"The interfaces file is an important part of command-line network configuration. What directory is it in?":"O arquivo interfaces é uma parte importante da configuração de rede pela linha de comando. Em qual diretório ele está?",
+"What is the name of a command-line package typically used in Kali to configure the network from the command line?":"Qual é o nome do pacote de linha de comando normalmente usado no Kali para configurar a rede pela linha de comando?",
+"When configuring a network from the command line (say with ifup or ifdown) which line will begin the section for a manual network configuration?":"Ao configurar uma rede pela linha de comando (por exemplo, com ifup ou ifdown), qual linha iniciará a seção de configuração manual de rede?",
+"Which methods can be used to configure network devices in Kali Linux? Choose all that apply:":"Quais métodos podem ser usados para configurar dispositivos de rede no Kali Linux? Selecione todos os aplicáveis:",
+"Which file contains encrypted user passwords?":"Qual arquivo contém as senhas de usuário criptografadas?",
+"Which command is used to add users to the system?":"Qual comando é usado para adicionar usuários ao sistema?",
+"Which command will suspend a user account?":"Qual comando suspenderá uma conta de usuário?",
+"Which is true of the SSH service on a default Kali install? Select all that apply.":"Qual afirmação é verdadeira sobre o serviço SSH em uma instalação padrão do Kali? Selecione todas as aplicáveis.",
+"Which command is commonly used to start services like ssh and postgresql?":"Qual comando é comumente usado para iniciar serviços como ssh e postgresql?",
+"Which command can used to create a new postgresql database?":"Qual comando pode ser usado para criar um novo banco de dados PostgreSQL?",
+"Which command is not a postgresql command?":"Qual comando não é um comando do PostgreSQL?",
+"Which command will create a postgres database name db_new?":"Qual comando criará um banco de dados PostgreSQL chamado db_new?",
+"Which of the following are not associated with Apache2? Choose one.":"Qual dos seguintes não está associado ao Apache2? Escolha um.",
+"Which of the following are not associated with Apache2?":"Qual dos seguintes não está associado ao Apache2?",
+"In Kali, what is responsible for the boot sequence, but also permanently acts as a full featured service manager, starting and monitoring services?":"No Kali, o que é responsável pela sequência de inicialização e também atua permanentemente como um gerenciador de serviços completo, iniciando e monitorando serviços?",
+"Which command will inspect the current status of the postgresql service?":"Qual comando verificará o status atual do serviço postgresql?",
+"Which command will determine if nmap has been modified by Kali?":"Qual comando determinará se o nmap foi modificado pelo Kali?",
+"Which command is used to report a bug to the Kali Linux developers?":"Qual comando é usado para reportar um bug aos desenvolvedores do Kali Linux?",
+"Which of these actions can be used to submit a bug to the Debian developers? Select all that apply.":"Quais destas ações podem ser usadas para enviar um bug aos desenvolvedores do Debian? Selecione todas as aplicáveis.",
+"Select all of the built-in security functions of a default installation of Kali Linux:":"Selecione todas as funções de segurança integradas de uma instalação padrão do Kali Linux:",
+"Which of the following are associated with the Kali Linux firewall? Select all that apply.":"Quais dos seguintes estão associados ao firewall do Kali Linux? Selecione todos os aplicáveis.",
+"Which of the following is a default chain in the Kali Linux firewall?":"Qual dos seguintes é uma cadeia padrão no firewall do Kali Linux?",
+"Place the chains in the proper processing order, from first to last:":"Coloque as cadeias na ordem correta de processamento, da primeira à última:",
+"Which of the following will apply a special case of source NAT to packets in the Kali Linux firewall?":"Qual dos seguintes aplicará um caso especial de NAT de origem aos pacotes no firewall do Kali Linux?",
+"Which of the following commands will block all packets originating from 8.8.8.8?":"Qual dos seguintes comandos bloqueará todos os pacotes originados de 8.8.8.8?",
+"Which of the following commands is used to delete all rules in the INPUT chain?":"Qual dos seguintes comandos é usado para excluir todas as regras da cadeia INPUT?",
+"Which of the following will explicitly allow SSH connections to your Kali Linux machine?":"Qual dos seguintes permitirá explicitamente conexões SSH à sua máquina Kali Linux?",
+"Which file should be updated to enable custom firewall rules at boot-time?":"Qual arquivo deve ser atualizado para habilitar regras de firewall personalizadas na inicialização?",
+"Which tool can be used to graphically monitor process status?":"Qual ferramenta pode ser usada para monitorar graficamente o status dos processos?",
+"Which easily-subverted command can be used to detect suspicious packages?":"Qual comando facilmente burlável pode ser usado para detectar pacotes suspeitos?",
+"Which of the following can be used to protect against brute-force logins?":"Qual dos seguintes pode ser usado para proteger contra logins por força bruta?",
+"Which tool directly installs packages without regard for dependencies or other packages?":"Qual ferramenta instala pacotes diretamente sem considerar dependências ou outros pacotes?",
+"Which tool is a complete package management system designed to to install and remove applications, update packages, and even upgrade your entire system?":"Qual ferramenta é um sistema completo de gerenciamento de pacotes projetado para instalar e remover aplicações, atualizar pacotes e até atualizar todo o sistema?",
+"Which is the key configuration file for defining package sources?":"Qual é o principal arquivo de configuração para definir as fontes de pacotes?",
+"Select the syntactically correct apt source description:":"Selecione a descrição de fonte apt sintaticamente correta:",
+"Which apt source description points to software that does not conform to the Debian Free Software Guidelines?":"Qual descrição de fonte apt aponta para software que não está em conformidade com as Diretrizes de Software Livre do Debian?",
+"Which of the following repositories is recommended for most users?":"Qual dos seguintes repositórios é recomendado para a maioria dos usuários?",
+"Which command will install the man-db package?":"Qual comando instalará o pacote man-db?",
+"Which command should be used for regular updates of Kali Linux and will remove obsolete packages and install new dependencies?":"Qual comando deve ser usado para atualizações regulares do Kali Linux e removerá pacotes obsoletos e instalará novas dependências?",
+"Which of the following commands downloads the latest list of available packages and should be run before working with apt?":"Qual dos seguintes comandos baixa a lista mais recente de pacotes disponíveis e deve ser executado antes de trabalhar com apt?",
+"Which command will show all the files installed by the metaploit-framework package?":"Qual comando mostrará todos os arquivos instalados pelo pacote metasploit-framework?",
+"Which of the following commands will display the name of the package that installed the file \"msfconsole\"?":"Qual dos seguintes comandos exibirá o nome do pacote que instalou o arquivo \"msfconsole\"?",
+"Which of the following commands will list all packages installed on the system?":"Qual dos seguintes comandos listará todos os pacotes instalados no sistema?",
+"You need to install a package for a CPU other than the one on the current system. How would you enable this?":"Você precisa instalar um pacote para uma CPU diferente da usada no sistema atual. Como habilitaria isso?",
+"Which of the following are graphical front ends to Kali's package manager?":"Quais dos seguintes são front-ends gráficos para o gerenciador de pacotes do Kali?",
+"Which of the following commands shows the architectures that are installed on the current system?":"Qual dos seguintes comandos mostra as arquiteturas instaladas no sistema atual?",
+"Which file contains the most vital information about a Debian package?":"Qual arquivo contém as informações mais importantes sobre um pacote Debian?",
+"Which of the following is not a part of a standard Debian package?":"Qual dos seguintes não faz parte de um pacote Debian padrão?",
+"Which file in a Debian package contains the actual files to be installed on the file system?":"Qual arquivo em um pacote Debian contém os arquivos que serão efetivamente instalados no sistema de arquivos?",
+"Which field in the package header will cause dpkg to refuse to install a package and trigger apt to resolve the problem by updating the incompatible package to a newer version?":"Qual campo no cabeçalho do pacote fará o dpkg recusar a instalação e fará o apt resolver o problema atualizando o pacote incompatível para uma versão mais nova?",
+"Which of the following is not a valid Debian package configuration script?":"Qual dos seguintes não é um script de configuração de pacote Debian válido?",
+"Which of the following commands will download the source of a Debian package?":"Qual dos seguintes comandos baixará o código-fonte de um pacote Debian?",
+"Which command will retrieve sources from a GIT repository?":"Qual comando recuperará fontes de um repositório GIT?",
+"Assuming that you are in a directory containing an unpacked source package, which command will install build dependencies listed in the Build-Depends field of the debian/control file?":"Supondo que você esteja em um diretório contendo um pacote-fonte descompactado, qual comando instalará as dependências de compilação listadas no campo Build-Depends do arquivo debian/control?",
+"Which file or command will reveal whether or not your changes to a Debian package \"stuck\"?":"Qual arquivo ou comando revelará se suas alterações em um pacote Debian foram efetivamente registradas?",
+"When applying changes, which command will update the prefix used in a Debian package to \"kali\"?":"Ao aplicar alterações, qual comando atualizará o prefixo usado em um pacote Debian para \"kali\"?",
+"Which command is used to create and manage Debian repositories?":"Qual comando é usado para criar e gerenciar repositórios Debian?",
+"Select all of the fields required in a repo configuration file:":"Selecione todos os campos necessários em um arquivo de configuração de repositório:",
+"Which file should be updated on client machines wishing to access a custom repository?":"Qual arquivo deve ser atualizado nas máquinas clientes que desejam acessar um repositório personalizado?",
+"Which of the following are not a part of the \"CIA triad\"?":"Qual dos seguintes não faz parte da \"tríade CIA\"?",
+"An organization owns a web server which generates revenue based on uptime. Which of the following security attributes of the system will be the primary focus of the organization?":"Uma organização possui um servidor web que gera receita com base no tempo de disponibilidade. Qual dos seguintes atributos de segurança do sistema será o principal foco da organização?",
+"A flaw has been found in a cryptographic algorithm that weakens the cryptographic system. Which of the following elements of the CIA triad are affected by this?":"Foi encontrada uma falha em um algoritmo criptográfico que enfraquece o sistema criptográfico. Qual dos seguintes elementos da tríade CIA é afetado por isso?",
+"Which of the following best describes describe software that can be used to take advantage of a security weakness?":"Qual dos seguintes melhor descreve um software que pode ser usado para explorar uma fraqueza de segurança?",
+"Which of the following (derived from likelihood of occurrence and impact) provides guidance to those responsible for securing and maintaining the systems in question?":"Qual dos seguintes, derivado da probabilidade de ocorrência e do impacto, fornece orientação aos responsáveis por proteger e manter os sistemas em questão?",
+"Which of the following leverages identified issues to uncover the worst-case scenario?":"Qual dos seguintes utiliza problemas identificados para descobrir o pior cenário possível?",
+"Which of the following best describes a technique that is used to target the various applications installed on the workstation of an employee within a target organization?":"Qual dos seguintes melhor descreve uma técnica usada para atingir as diversas aplicações instaladas na estação de trabalho de um funcionário dentro de uma organização-alvo?"
+};
+
+const optionTranslations = {
+"rolling distribution based on Debian testing":"distribuição rolling baseada no Debian testing",
+"rolling distribution based on Debian Wheezy stable":"distribuição rolling baseada no Debian Wheezy stable",
+"static, versioned distribution based on Debian Wheezy testing":"distribuição estática e versionada baseada no Debian Wheezy testing",
+"static, versioned distribution based on Debian Jessie stable":"distribuição estática e versionada baseada no Debian Jessie stable",
+"Kali 32-bit":"Kali 32 bits","Kali 64-bit":"Kali 64 bits","Kali armhf":"Kali armhf","Kali armel":"Kali armel",
+"True":"Verdadeiro","False":"Falso",
+"Read, Write, Execute":"Leitura, Escrita, Execução","Read, Execute":"Leitura, Execução","Execute":"Execução","No permissions":"Sem permissões",
+"All of the above":"Todas as anteriores","None of the above":"Nenhuma das anteriores",
+"Confidentiality":"Confidencialidade","Integrity":"Integridade","Availability":"Disponibilidade","Authentication":"Autenticação",
+"Accessibility":"Acessibilidade","Classification":"Classificação","Exploit":"Exploit","vulnerability":"Vulnerabilidade","patch":"Patch","race condition":"Condição de corrida"
+};
+function displayText(s){
+  if(lang==="en") return s;
+  return translations[s] || optionTranslations[s] || s;
+}
+
 function render(){
  if(!filtered.length){document.getElementById("app").innerHTML="<p>No questions available.</p>";return}
  if(idx>=filtered.length){showResult();return}
@@ -68,21 +184,9 @@ function render(){
  if(a&&a.checked){
    const ok=a.selected.length===q.answer.length&&a.selected.every(x=>q.answer.includes(x));
    const ex=explanation(q);
-   const selectedText = a.selected.map(i=>displayText(q.options[i])).join(", ");
-   const correctText = q.answer.map(i=>displayText(q.options[i])).join(", ");
-   const detailed = detailedExplanation(q);
-   const feedbackText = detailed[feedbackLang];
    feedback=`<div class="feedback ${ok?"ok":"bad"}"><h3>${ok?ui[lang].correct:ui[lang].wrong}</h3>
-   ${ok
-     ? `<b>${ui[lang].why}</b><div class="pt">${escape(feedbackText)}</div>`
-     : `<b>${ui[lang].whyWrong}</b>
-        <div class="pt"><strong>Selected option:</strong> ${escape(selectedText)}</div>
-        <div class="pt">${escape(feedbackText)}</div>
-        <br><b>${ui[lang].right}</b>
-        <div class="pt">${escape(correctText)}</div>
-        <div class="pt">${escape(feedbackText)}</div>`}
-   <div style="margin-top:12px"><button onclick="toggleFeedbackLanguage()">${feedbackLang==="pt"?"🇺🇸 Show explanation in English":"🇧🇷 Mostrar explicação em português"}</button></div>
-   </div>`;
+   ${ok?`<b>${ui[lang].why}</b>`:`<b>${ui[lang].whyWrong}</b><div class="pt">${escape(ex[lang])}</div><br><b>${ui[lang].right}</b><div class="pt">${escape(ex[lang])}</div>`}
+   ${ok?`<div class="pt">${escape(ex[lang])}</div>`:""}</div>`;
  }
  document.getElementById("app").innerHTML=`<div class="meta">Chapter ${q.chapter} · Question ${q.number} · ${idx+1}/${filtered.length}</div>
  <h2 class="question">${escape(displayText(q.question))}</h2>${opts}${feedback}
