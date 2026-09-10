@@ -47,11 +47,9 @@ const ptQ = {};
 const ptOpt = {};
 function key(q){return q.chapter+"-"+q.number}
 function explanation(q){
- const a=q.answer.map(i=>q.options[i]).join(", ");
- return {
-  en:`The correct answer is: ${a}. This follows the expected Kali/Linux behavior or the definition tested by this question.`,
-  pt:`A resposta correta é: ${a}. Isso está de acordo com o comportamento esperado do Kali/Linux ou com a definição avaliada nesta questão.`
- };
+  const a=q.answer.map(i=>displayText(q.options[i])).join(", ");
+  const d=detailedExplanation(q);
+  return {en:`The correct answer is: ${a}. ${d.en}`,pt:`A resposta correta é: ${a}. ${d.pt}`};
 }
 function render(){
  if(!filtered.length){document.getElementById("app").innerHTML="<p>No questions available.</p>";return}
@@ -70,12 +68,24 @@ function render(){
  if(a&&a.checked){
    const ok=a.selected.length===q.answer.length&&a.selected.every(x=>q.answer.includes(x));
    const ex=explanation(q);
+   const selectedText = a.selected.map(i=>displayText(q.options[i])).join(", ");
+   const correctText = q.answer.map(i=>displayText(q.options[i])).join(", ");
+   const detailed = detailedExplanation(q);
+   const feedbackText = detailed[feedbackLang];
    feedback=`<div class="feedback ${ok?"ok":"bad"}"><h3>${ok?ui[lang].correct:ui[lang].wrong}</h3>
-   ${ok?`<b>${ui[lang].why}</b>`:`<b>${ui[lang].whyWrong}</b><div class="pt">${escape(ex[lang])}</div><br><b>${ui[lang].right}</b><div class="pt">${escape(ex[lang])}</div>`}
-   ${ok?`<div class="pt">${escape(ex[lang])}</div>`:""}</div>`;
+   ${ok
+     ? `<b>${ui[lang].why}</b><div class="pt">${escape(feedbackText)}</div>`
+     : `<b>${ui[lang].whyWrong}</b>
+        <div class="pt"><strong>Selected option:</strong> ${escape(selectedText)}</div>
+        <div class="pt">${escape(feedbackText)}</div>
+        <br><b>${ui[lang].right}</b>
+        <div class="pt">${escape(correctText)}</div>
+        <div class="pt">${escape(feedbackText)}</div>`}
+   <div style="margin-top:12px"><button onclick="toggleFeedbackLanguage()">${feedbackLang==="pt"?"🇺🇸 Show explanation in English":"🇧🇷 Mostrar explicação em português"}</button></div>
+   </div>`;
  }
  document.getElementById("app").innerHTML=`<div class="meta">Chapter ${q.chapter} · Question ${q.number} · ${idx+1}/${filtered.length}</div>
- <h2 class="question">${escape(q.question)}</h2>${opts}${feedback}
+ <h2 class="question">${escape(displayText(q.question))}</h2>${opts}${feedback}
  <div class="actions"><button onclick="prev()" ${idx===0?"disabled":""}>←</button>
  <button class="primary" onclick="${a&&a.checked?"next()":"check()"}">${a&&a.checked?(idx===filtered.length-1?ui[lang].finish:ui[lang].next):ui[lang].submit}</button></div>`;
 }
@@ -99,7 +109,7 @@ function showResult(){
  document.getElementById("app").innerHTML=`<div class="result"><div class="meta">${ui[lang].result}</div><div class="score">${acc}%</div>
  <div class="stats"><div class="stat"><b>${correct}</b>${ui[lang].correctN}</div><div class="stat"><b>${wrong}</b>${ui[lang].wrongN}</div><div class="stat"><b>${err}%</b>${ui[lang].error}</div></div>
  <button class="primary" onclick="restart()">${ui[lang].restart}</button>
- <div class="review"><h3>${ui[lang].review}</h3>${filtered.map((q,i)=>{const a=answers[i]||{selected:[]};const ok=a.selected.length===q.answer.length&&a.selected.every(x=>q.answer.includes(x));return `<div class="review-item"><b>Q${i+1} — ${ok?"✓":"✗"}</b> <span class="small">${escape(q.question)}</span></div>`}).join("")}</div></div>`;
+ <div class="review"><h3>${ui[lang].review}</h3>${filtered.map((q,i)=>{const a=answers[i]||{selected:[]};const ok=a.selected.length===q.answer.length&&a.selected.every(x=>q.answer.includes(x));return `<div class="review-item"><b>Q${i+1} — ${ok?"✓":"✗"}</b> <span class="small">${escape(displayText(q.question))}</span></div>`}).join("")}</div></div>`;
 }
 function escape(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 BANK.forEach(q=>{if(![...document.querySelectorAll("#chapterFilter option")].some(o=>o.value==q.chapter)){let o=document.createElement("option");o.value=q.chapter;o.textContent="Chapter "+q.chapter;document.getElementById("chapterFilter").appendChild(o)}})
